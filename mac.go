@@ -1,13 +1,8 @@
-package main
+package mac
 
 import (
 	_ "embed"
 	"encoding/json"
-	"fmt"
-	"maps"
-	"slices"
-
-	"github.com/samber/lo"
 )
 
 /*
@@ -35,9 +30,4 @@ func init() {
 	for _, v := range pn {
 		Prefix[v.P] = v.N
 	}
-}
-
-func main() {
-	fmt.Println(len(Prefix))
-	fmt.Println(len(lo.Uniq(slices.Collect(maps.Values(Prefix)))))
 }

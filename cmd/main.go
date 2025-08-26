@@ -10,6 +10,7 @@ import (
 )
 
 func main() {
-	fmt.Println(len(mac.Prefix))
-	fmt.Println(len(lo.Uniq(slices.Collect(maps.Values(mac.Prefix)))))
+	prefixes := mac.Prefixes()
+	fmt.Println(len(prefixes))
+	fmt.Println(len(lo.Uniq(slices.Collect(maps.Values(prefixes)))))
 }

@@ -3,6 +3,8 @@ package mac
 import (
 	_ "embed"
 	"encoding/json"
+	"maps"
+	"sync"
 	"unique"
 )
 
@@ -16,19 +18,48 @@ csvjson mac.txt > mac.json
 rm mac.txt
 */
 
-//go:embed mac.json
-var data []byte
+var (
+	//go:embed mac.json
+	data []byte
 
-var Prefix = make(map[string]unique.Handle[string])
+	mu     sync.Mutex
+	prefix map[string]unique.Handle[string]
+)
 
-func init() {
+func load() {
+	mu.Lock()
+	defer mu.Unlock()
+
+	prefix = make(map[string]unique.Handle[string])
 	var pn []struct {
 		P, N string
 	}
+
 	if err := json.Unmarshal(data, &pn); err != nil {
 		panic(err)
 	}
+
 	for _, v := range pn {
-		Prefix[v.P] = unique.Make(v.N)
+		prefix[v.P] = unique.Make(v.N)
 	}
+}
+
+func Prefixes() map[string]unique.Handle[string] {
+	if prefix == nil {
+		load()
+	}
+
+	return maps.Clone(prefix)
+}
+
+func Vendor(key string) string {
+	if prefix == nil {
+		load()
+	}
+
+	if h, ok := prefix[key]; ok {
+		return h.Value()
+	}
+
+	return ""
 }

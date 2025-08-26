@@ -3,6 +3,7 @@ package mac
 import (
 	_ "embed"
 	"encoding/json"
+	"unique"
 )
 
 /*
@@ -18,7 +19,7 @@ rm mac.txt
 //go:embed mac.json
 var data []byte
 
-var Prefix = map[string]string{}
+var Prefix = make(map[string]unique.Handle[string])
 
 func init() {
 	var pn []struct {
@@ -28,6 +29,6 @@ func init() {
 		panic(err)
 	}
 	for _, v := range pn {
-		Prefix[v.P] = v.N
+		Prefix[v.P] = unique.Make(v.N)
 	}
 }
